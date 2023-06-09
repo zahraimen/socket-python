@@ -1,10 +1,7 @@
-# ws = create_connection("ws://127.0.0.1:8000/admin/")
-# print(ws.recv())
-# ws.send("Hello, World")
-# ws.close()
-
-
+from websocket import create_connection
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+import json
 
 
 class Ui_Dialog(object):
@@ -102,18 +99,20 @@ class Ui_Dialog(object):
 
     def sendKey(self):
         question = self.lineEdit.text()
+        q = question
         self.lineEdit.setText('')
-        question='<p style=\" color: #25255e; \">%s</p>' % question
-        self.box='<b style=\"  font:20px Calibri; padding:25px \">'f'{question}''</b>'
+        question = '<p style=\" color: #25255e; \">%s</p>' % question
+        self.box = '<b style=\"  font:20px Calibri; padding:25px \">'f'{question}''</b>'
         self.textBrowser.append(self.box)
-        
 
-        responce='<span style=\" color: #bf0066;font:20px Calibri; padding:25px\">'f'جواب ارسال شده برای سوال شما.''</span>'
+        ws.send(q)
+        answer = json.loads(ws.recv())['answer']
+        responce = '<span style=\" color: #bf0066;font:20px Calibri; padding:25px\">'f'{answer}''</span>'
         self.textBrowser.append(responce)
-        
-        liner='<p style=\"  font:20px Calibri; padding:25px \">--------------------------------------------------------</p>'
-        self.textBrowser.append(liner)
 
+        liner = '<p style=\"  font:20px Calibri; padding:25px ' \
+                '\">--------------------------------------------------------</p>'
+        self.textBrowser.append(liner)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -125,8 +124,9 @@ class Ui_Dialog(object):
 if __name__ == "__main__":
     import sys
 
+    ws = create_connection("ws://127.0.0.1:8000/admin/")
     app = QtWidgets.QApplication(sys.argv)
-    style="""
+    style = """
         QWidget{
             background:#25255e;
         }
