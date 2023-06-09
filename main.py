@@ -105,10 +105,16 @@ class Ui_Dialog(object):
         self.box = '<b style=\"  font:20px Calibri; padding:25px \">'f'{question}''</b>'
         self.textBrowser.append(self.box)
 
-        ws.send(q)
-        answer = json.loads(ws.recv())['answer']
+        try:
+            ws.send(q)
+            answer = json.loads(ws.recv())['answer']
+        except Exception as e:
+
+            answer = 'جوابی برای کلمه ارسال شده وجود ندارد!'
+
         responce = '<span style=\" color: #bf0066;font:20px Calibri; padding:25px\">'f'{answer}''</span>'
         self.textBrowser.append(responce)
+
 
         liner = '<p style=\"  font:20px Calibri; padding:25px ' \
                 '\">--------------------------------------------------------</p>'
@@ -124,7 +130,13 @@ class Ui_Dialog(object):
 if __name__ == "__main__":
     import sys
 
-    ws = create_connection("ws://127.0.0.1:8000/admin/")
+    try:
+
+        ws = create_connection("ws://185.208.174.101:8000/admin/")
+    except Exception as e:
+
+        ws = None
+
     app = QtWidgets.QApplication(sys.argv)
     style = """
         QWidget{
