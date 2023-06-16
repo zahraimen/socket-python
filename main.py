@@ -109,8 +109,18 @@ class Ui_Dialog(object):
             ws.send(q)
             answer = json.loads(ws.recv())['answer']
         except Exception as e:
+            if str(e)=="Connection to remote host was lost." or str(e)=="cannot access local variable 'ws' where it is not associated with a value":
+                ws = create_connection("ws://185.208.174.101:8000/admin/")
+                try:
+                    ws.send(q)
+                    answer = json.loads(ws.recv())['answer']
+                except Exception as e:
+                    answer = 'جوابی برای کلمه ارسال شده وجود ندارد!'
+                
+            else:
+                answer = 'جوابی برای کلمه ارسال شده وجود ندارد!'
 
-            answer = 'جوابی برای کلمه ارسال شده وجود ندارد!'
+            
 
         responce = '<span style=\" color: #bf0066;font:20px Calibri; padding:25px\">'f'{answer}''</span>'
         self.textBrowser.append(responce)
@@ -131,7 +141,7 @@ if __name__ == "__main__":
     import sys
 
     try:
-
+        global ws
         ws = create_connection("ws://185.208.174.101:8000/admin/")
     except Exception as e:
 
